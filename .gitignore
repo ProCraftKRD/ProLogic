@@ -1,0 +1,62 @@
+# ==============================================================================
+# ProLogic - Git Ignore Rules
+# ==============================================================================
+
+# Node.js Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# TypeScript & UI Build Outputs
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Electron Packager & Release Output
+# Kept locally on disk; excluded from remote Git repository
+release/
+out/
+build/win-unpacked/
+*.blockmap
+
+# Environment & Local Secrets
+.env
+.env.local
+.env.*.local
+
+# Diagnostic & OS Artifacts
+*.log
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE & Editor Settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary & Scratch Files
+scratch_*
+*.tmp
+*.temp
+test_assets/
+decompiled_analysis/
+__pycache__/
+*.pyc
+.agents/
+skills-lock.json

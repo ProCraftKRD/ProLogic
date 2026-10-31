@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProLogic v1.0.0 - Digital Logic Simulator</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="theme-dark">
+  <!-- Custom Title Bar -->
+  <header class="fluent-titlebar" id="app-titlebar">
+    <div class="titlebar-left">
+      <!-- App Brand & Logo -->
+      <div class="titlebar-brand" id="brand-header" title="ProLogic - Click to view About" style="cursor: pointer;">
+        <img src="assets/logo-dark.png" class="titlebar-logo-icon" width="20" height="20" alt="ProLogic Logo" />
+        <span class="titlebar-title-text">ProLogic</span>
+        <span class="titlebar-version-pill">v1.0.0</span>
+      </div>
+
+      <div class="titlebar-separator"></div>
+
+      <!-- Document / Circuit Name Indicator -->
+      <div class="titlebar-document-indicator" title="Current Circuit Document">
+        <svg width="13" height="13" viewBox="0 0 384 512" fill="currentColor" class="titlebar-doc-glyph"><path d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+        <span id="titlebar-circuit-title" class="titlebar-circuit-title">Half Adder</span>
+        <span id="titlebar-dirty-indicator" class="titlebar-dirty-indicator" title="Unsaved changes" style="display: none;">•</span>
+      </div>
+    </div>
+
+    <!-- Center Draggable Window Region -->
+    <div class="titlebar-center-drag"></div>
+
+    <!-- Native Window Caption Buttons -->
+    <div class="titlebar-window-controls">
+      <button id="btn-win-minimize" class="win-btn win-btn-minimize" title="Minimize" aria-label="Minimize">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+          <line x1="1.5" y1="6" x2="10.5" y2="6" />
+        </svg>
+      </button>
+      <button id="btn-win-maximize" class="win-btn win-btn-maximize" title="Maximize" aria-label="Maximize">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.2" id="icon-win-maximize">
+          <rect x="1" y="1" width="9" height="9" rx="0.5" />
+        </svg>
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.2" id="icon-win-restore" style="display: none;">
+          <path d="M3.2 2.2V1.5H9.5V7.8H8.8" />
+          <rect x="1.5" y="3.2" width="7.3" height="7.3" rx="0.5" />
+        </svg>
+      </button>
+      <button id="btn-win-close" class="win-btn win-btn-close" title="Close" aria-label="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+          <line x1="1.5" y1="1.5" x2="10.5" y2="10.5" />
+          <line x1="10.5" y1="1.5" x2="1.5" y2="10.5" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Command Bar Ribbon -->
+  <nav class="fluent-commandbar" aria-label="Command Bar">
+    <!-- Group 1: History (Undo / Redo) -->
+    <div class="commandbar-group segmented-btn-group" title="Undo / Redo History">
+      <button id="btn-undo" class="fluent-btn" title="Undo previous action (Ctrl+Z)" disabled>
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></svg>
+        <span class="btn-label-text">Undo</span>
+      </button>
+      <button id="btn-redo" class="fluent-btn" title="Redo next action (Ctrl+Y)" disabled>
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5z"/></svg>
+        <span class="btn-label-text">Redo</span>
+      </button>
+    </div>
+
+    <div class="commandbar-divider"></div>
+
+    <!-- Group 3: Clipboard Actions (Compact Icon Segment with Authentic Scissors Cut) -->
+    <div class="commandbar-group segmented-btn-group" title="Clipboard Actions">
+      <button id="btn-cut" class="fluent-btn fluent-btn-compact" title="Cut selected components (Ctrl+X)">
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M256 192l-39.5-39.5c4.9-12.6 7.5-26.2 7.5-40.5C224 50.1 173.9 0 112 0S0 50.1 0 112s50.1 112 112 112c14.3 0 27.9-2.7 40.5-7.5L192 256l-39.5 39.5c-12.6-4.9-26.2-7.5-40.5-7.5C50.1 288 0 338.1 0 400s50.1 112 112 112s112-50.1 112-112c0-14.3-2.7-27.9-7.5-40.5L499.2 76.8c7.1-7.1 7.1-18.5 0-25.6c-28.3-28.3-74.1-28.3-102.4 0L256 192zm22.6 150.6L396.8 460.8c28.3 28.3 74.1 28.3 102.4 0c7.1-7.1 7.1-18.5 0-25.6L342.6 278.6l-64 64zM64 112a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm48 240a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
+      </button>
+      <button id="btn-copy" class="fluent-btn fluent-btn-compact" title="Copy selected components (Ctrl+C)">
+        <svg width="13" height="13" viewBox="0 0 448 512" fill="currentColor"><path d="M208 0H332.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V336c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V48c0-26.5 21.5-48 48-48zM48 128h80v64H64V448H256V416h64v48c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V176c0-26.5 21.5-48 48-48z"/></svg>
+      </button>
+      <button id="btn-paste" class="fluent-btn fluent-btn-compact" title="Paste components from clipboard (Ctrl+V)">
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M160 0c-23.7 0-44.4 12.9-55.4 32H48C21.5 32 0 53.5 0 80V400c0 26.5 21.5 48 48 48H192V176c0-44.2 35.8-80 80-80h48V80c0-26.5-21.5-48-48-48H215.4C204.4 12.9 183.7 0 160 0zM272 128c-26.5 0-48 21.5-48 48V448v16c0 26.5 21.5 48 48 48H464c26.5 0 48-21.5 48-48V243.9c0-12.7-5.1-24.9-14.1-33.9l-67.9-67.9c-9-9-21.2-14.1-33.9-14.1H320 272zM160 40a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
+      </button>
+      <button id="btn-delete" class="fluent-btn fluent-btn-compact fluent-btn-danger" title="Delete selection (Del)">
+        <svg width="13" height="13" viewBox="0 0 448 512" fill="currentColor"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg>
+      </button>
+    </div>
+
+    <div class="commandbar-divider"></div>
+
+    <!-- Group 4: Simulation Controls -->
+    <div class="commandbar-group">
+      <button id="btn-play" class="fluent-btn fluent-btn-accent btn-active" title="Play or Pause Simulation (Space)">
+        <svg width="13" height="13" viewBox="0 0 320 512" fill="currentColor" class="icon-pause"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>
+        <span class="btn-label-text">Pause</span>
+      </button>
+      <button id="btn-step" class="fluent-btn" title="Step simulation by 100ms">
+        <svg width="13" height="13" viewBox="0 0 320 512" fill="currentColor"><path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4l192 160L256 241V96c0-17.7 14.3-32 32-32s32 14.3 32 32V416c0 17.7-14.3 32-32 32s-32-14.3-32-32V271l-11.5 9.6-192 160z"/></svg>
+        <span class="btn-label-text">Step</span>
+      </button>
+      <button id="btn-reset" class="fluent-btn" title="Reset all clock accumulators">
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></svg>
+        <span class="btn-label-text">Reset</span>
+      </button>
+    </div>
+
+    <div class="commandbar-divider"></div>
+
+    <!-- Group 5: Preset Samples List -->
+    <div class="commandbar-group">
+      <div class="samples-dropdown-container">
+        <button id="btn-samples-dropdown" class="fluent-btn sample-dropdown-btn" type="button" title="Load Sample Circuit" aria-haspopup="true" aria-expanded="false">
+          <svg width="13" height="13" viewBox="0 0 576 512" fill="currentColor" class="btn-icon"><path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2 .1-32.1l112-192z"/></svg>
+          <span id="sample-dropdown-label" class="btn-label-text">Sample Circuits...</span>
+          <svg width="10" height="10" viewBox="0 0 512 512" fill="currentColor" class="dropdown-chevron-icon"><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
+        </button>
+
+        <div id="samples-dropdown-menu" class="commandbar-overflow-flyout samples-flyout-menu hidden" role="menu">
+          <button class="menu-flyout-item sample-menu-item" data-sample="Half Adder" role="menuitem">
+            <span class="sample-item-dot" style="background:#00f5d4;"></span>
+            <span class="menu-item-text">Half Adder</span>
+          </button>
+          <button class="menu-flyout-item sample-menu-item" data-sample="Full Adder" role="menuitem">
+            <span class="sample-item-dot" style="background:#00b4d8;"></span>
+            <span class="menu-item-text">Full Adder</span>
+          </button>
+          <button class="menu-flyout-item sample-menu-item" data-sample="SR Flip-Flop" role="menuitem">
+            <span class="sample-item-dot" style="background:#38bdf8;"></span>
+            <span class="menu-item-text">SR Flip-Flop (NAND)</span>
+          </button>
+          <button class="menu-flyout-item sample-menu-item" data-sample="D-Latch" role="menuitem">
+            <span class="sample-item-dot" style="background:#818cf8;"></span>
+            <span class="menu-item-text">D-Latch</span>
+          </button>
+          <button class="menu-flyout-item sample-menu-item" data-sample="4-Bit Ripple Counter" role="menuitem">
+            <span class="sample-item-dot" style="background:#a78bfa;"></span>
+            <span class="menu-item-text">4-Bit Counter + Hex</span>
+          </button>
+          <button class="menu-flyout-item sample-menu-item" data-sample="4-Bit JK Ripple Counter" role="menuitem">
+            <span class="sample-item-dot" style="background:#c084fc;"></span>
+            <span class="menu-item-text">4-Bit JK Counter</span>
+          </button>
+          <button class="menu-flyout-item sample-menu-item" data-sample="Tri-State Bus" role="menuitem">
+            <span class="sample-item-dot" style="background:#f59e0b;"></span>
+            <span class="menu-item-text">Tri-State Bus</span>
+          </button>
+        </div>
+
+        <select id="select-samples" style="display:none;" aria-hidden="true">
+          <option value="">Sample Circuits...</option>
+          <option value="Half Adder">Half Adder</option>
+          <option value="Full Adder">Full Adder</option>
+          <option value="SR Flip-Flop">SR Flip-Flop</option>
+          <option value="D-Latch">D-Latch</option>
+          <option value="4-Bit Ripple Counter">4-Bit Ripple Counter</option>
+          <option value="4-Bit JK Ripple Counter">4-Bit JK Ripple Counter</option>
+          <option value="Tri-State Bus">Tri-State Bus</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Group 6: Right Side Actions & Overflow Menu -->
+    <div class="commandbar-group commandbar-right">
+      <!-- File Operations -->
+      <button id="btn-open" class="fluent-btn" title="Open ProLogic or CAD circuit file (Ctrl+O)">
+        <svg width="13" height="13" viewBox="0 0 576 512" fill="currentColor"><path d="M88.7 223.8L0 375.8V96C0 60.7 28.7 32 64 32H181.5c17 0 33.3 6.7 45.3 18.7l26.5 26.5c12 12 28.3 18.7 45.3 18.7H416c35.3 0 64 28.7 64 64v32H144c-22.8 0-43.8 12.1-55.3 31.8zm27.6 16.1C122.1 230 132.6 224 144 224H544c11.5 0 22 6.1 27.7 16.1s5.7 22.2-.1 32.1l-112 192C453.9 474 443.4 480 432 480H32c-11.5 0-22-6.1-27.7-16.1s-5.7-22.2 .1-32.1l112-192z"/></svg>
+        <span class="btn-label-text">Open</span>
+      </button>
+      <button id="btn-save" class="fluent-btn fluent-btn-accent" title="Save ProLogic .plgc circuit document (Ctrl+S)">
+        <svg width="13" height="13" viewBox="0 0 448 512" fill="currentColor"><path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>
+        <span class="btn-label-text">Save</span>
+      </button>
+      <button id="btn-new" class="fluent-btn" title="New blank workspace (Ctrl+N)">
+        <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+        <span class="btn-label-text">New</span>
+      </button>
+
+      <!-- Command Bar Overflow Flyout ("•••" More Options) -->
+      <div class="commandbar-overflow-container">
+        <button id="btn-commandbar-overflow" class="fluent-btn fluent-btn-compact" title="More Options (•••)" aria-haspopup="true" aria-expanded="false">
+          <svg width="14" height="14" viewBox="0 0 128 512" fill="currentColor"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>
+        </button>
+
+        <div id="commandbar-overflow-menu" class="commandbar-overflow-flyout hidden" role="menu">
+          <button id="menu-save-as" class="menu-flyout-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V173.3c0-17-6.7-33.3-18.7-45.3L352 50.7C340 38.7 323.7 32 306.7 32H64zm0 96c0-17.7 14.3-32 32-32H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V128zM224 288a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/></svg>
+            <span class="menu-item-text">Save As...</span>
+          </button>
+          <button id="menu-package-ic" class="menu-flyout-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+            <span class="menu-item-text">Package Custom IC...</span>
+          </button>
+          <button id="menu-export-png" class="menu-flyout-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M0 96C0 60.7 28.7 32 64 32H448c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM323.8 202.5c-4.5-6.6-11.9-10.5-19.8-10.5s-15.4 3.9-19.8 10.5l-87 127.6L170.7 297c-4.6-5.7-11.5-9-18.7-9s-14.2 3.3-18.7 9l-64 80c-5.8 7.2-6.9 17.1-2.9 25.4s12.4 13.6 21.6 13.6h336c8.9 0 17.1-4.9 21.2-12.8s3.6-17.4-1.4-24.7l-120-176zM112 192a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"/></svg>
+            <span class="menu-item-text">Export Schematic (PNG)</span>
+          </button>
+          <button id="menu-clear-canvas" class="menu-flyout-item menu-item-danger" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg>
+            <span class="menu-item-text">Clear Entire Canvas</span>
+          </button>
+          <div class="menu-flyout-divider"></div>
+          <!-- Theme Switching Options in Menu -->
+          <button id="menu-theme-toggle" class="menu-flyout-item" role="menuitem">
+            <span id="menu-theme-icon"><svg width="14" height="14" viewBox="0 0 576 512" fill="currentColor"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg></span>
+            <span id="menu-theme-text" class="menu-item-text">Theme: Follow Windows</span>
+          </button>
+          <div class="menu-flyout-divider"></div>
+          <button id="menu-settings" class="menu-flyout-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/></svg>
+            <span class="menu-item-text">Preferences & Settings</span>
+          </button>
+          <button id="menu-about" class="menu-flyout-item" role="menuitem">
+            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+            <span class="menu-item-text">About ProLogic</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Viewport: Three-column Fluid Layout with Draggable Splitters -->
+  <main class="main-viewport" id="main-viewport">
+    <!-- Component Palette Sidebar (Left) -->
+    <aside id="palette-sidebar" class="palette-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M448 96V224H288V96H448zm0 192V416H288V288H448zM224 224H64V96H224V224zM64 288H224V416H64V288zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z"/></svg>
+          <span>Component Catalog</span>
+        </div>
+        <button id="btn-collapse-palette" class="sidebar-collapse-btn" title="Collapse Palette (Ctrl+B)">
+          <svg width="12" height="12" viewBox="0 0 320 512" fill="currentColor"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
+        </button>
+      </div>
+
+      <div class="palette-search-wrapper">
+        <div class="fluent-search-box">
+          <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor" class="search-glyph"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+          <input id="palette-search" class="search-input" type="text" placeholder="Search gates, controls, ICs..." />
+        </div>
+      </div>
+
+      <div id="palette-items" class="palette-list">
+        <!-- Injected dynamically by app.ts -->
+      </div>
+    </aside>
+
+    <!-- Draggable Left Splitter Handle -->
+    <div id="splitter-palette" class="splitter-handle splitter-left" title="Drag to resize component palette">
+      <div class="splitter-grip"></div>
+    </div>
+
+    <!-- Quick Expand Handle for Palette (shown when collapsed) -->
+    <button id="btn-expand-palette" class="sidebar-dock-toggle dock-toggle-left" title="Expand Component Catalog (Ctrl+B)" style="display: none;">
+      <svg width="12" height="12" viewBox="0 0 320 512" fill="currentColor"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
+      <span class="dock-toggle-label">Catalog</span>
+    </button>
+
+    <!-- Canvas Container (Center) -->
+    <section id="canvas-container" class="canvas-container">
+      <svg id="circuit-canvas" class="canvas-svg">
+        <defs>
+          <pattern id="grid-dots" width="15" height="15" patternUnits="userSpaceOnUse">
+            <circle cx="1.5" cy="1.5" r="1" fill="#283548" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-dots)" />
+      </svg>
+
+      <!-- Floating Canvas HUD / Mini-controls -->
+      <div class="canvas-hud-container" id="canvas-hud">
+        <div class="canvas-hud-pill">
+          <!-- Selection Mode vs Pan Mode Tool Toggle -->
+          <button id="btn-tool-select" class="hud-btn hud-btn-tool active" title="Selection Mode [V] - Select &amp; Move">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m4 4 7.07 17 2.51-7.39L21 11.07z"/>
+            </svg>
+          </button>
+          <button id="btn-tool-pan" class="hud-btn hud-btn-tool" title="Pan Mode [H] - Drag to Pan Canvas">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/>
+              <path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/>
+              <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/>
+              <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+            </svg>
+          </button>
+          <div class="hud-divider"></div>
+          <button id="btn-hud-zoom-out" class="hud-btn" title="Zoom Out (Ctrl+Minus)">
+            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM136 184c-13.3 0-24 10.7-24 24s10.7 24 24 24H280c13.3 0 24-10.7 24-24s-10.7-24-24-24H136z"/></svg>
+          </button>
+          <span id="hud-zoom-label" class="hud-zoom-text" title="Current Zoom Percentage">100%</span>
+          <button id="btn-hud-zoom-in" class="hud-btn" title="Zoom In (Ctrl+Plus)">
+            <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM184 296c0 13.3 10.7 24 24 24s24-10.7 24-24V232h64c13.3 0 24-10.7 24-24s-10.7-24-24-24H232V120c0-13.3-10.7-24-24-24s-24 10.7-24 24v64H120c-13.3 0-24 10.7-24 24s10.7 24 24 24h64v64z"/></svg>
+          </button>
+          <div class="hud-divider"></div>
+          <button id="btn-hud-zoom-reset" class="hud-btn hud-btn-textual" title="Reset Zoom to 100% (Ctrl+0)">
+            <span>1:1</span>
+          </button>
+          <button id="btn-hud-zoom-fit" class="hud-btn hud-btn-with-label" title="Fit View to All Components (Ctrl+F)">
+            <svg width="14" height="14" viewBox="0 0 448 512" fill="currentColor"><path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z"/></svg>
+            <span>Fit</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Draggable Right Splitter Handle -->
+    <div id="splitter-properties" class="splitter-handle splitter-right" title="Drag to resize properties inspector">
+      <div class="splitter-grip"></div>
+    </div>
+
+    <!-- Quick Expand Handle for Properties Inspector (shown when collapsed) -->
+    <button id="btn-expand-properties" class="sidebar-dock-toggle dock-toggle-right" title="Expand Inspector (Ctrl+I)" style="display: none;">
+      <svg width="12" height="12" viewBox="0 0 320 512" fill="currentColor"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
+      <span class="dock-toggle-label">Inspector</span>
+    </button>
+
+    <!-- Component Properties Inspector (Right) -->
+    <aside id="properties-sidebar" class="properties-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <svg width="14" height="14" viewBox="0 0 512 512" fill="currentColor"><path d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z"/></svg>
+          <span>Component Inspector</span>
+        </div>
+        <button id="btn-collapse-properties" class="sidebar-collapse-btn" title="Collapse Inspector (Ctrl+I)">
+          <svg width="12" height="12" viewBox="0 0 320 512" fill="currentColor"><path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
+        </button>
+      </div>
+
+      <div id="properties-content" class="properties-scroll-body">
+        <div class="properties-empty-state">
+          <svg width="36" height="36" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+          <p>Select a component on the canvas to inspect its pins and properties.</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Bottom Status Bar -->
+  <footer class="bottom-status-bar">
+    <div class="status-left">
+      <div class="status-shortcuts">Shortcuts: [Ctrl+Z] Undo • [Ctrl+Y] Redo • [Ctrl+C] Copy • [Ctrl+V] Paste • [Del] Delete • [R] Rotate • [V] Select • [H] Pan • [Ctrl+F] Fit</div>
+    </div>
+    <div class="status-right">
+      <!-- Theme Switcher Pill -->
+      <button id="btn-theme-toggle" class="status-btn" title="Toggle Theme: System / Dark / Light (Ctrl+T)">
+        <svg width="13" height="13" viewBox="0 0 576 512" fill="currentColor" id="theme-icon"><path d="M64 0C28.7 0 0 28.7 0 64V352c0 35.3 28.7 64 64 64H240l-10.7 32H160c-17.7 0-32 14.3-32 32s14.3 32 32 32H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H346.7L336 416H512c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H64zM512 64V288H64V64H512z"/></svg>
+        <span id="theme-status-text">Theme: System</span>
+      </button>
+
+      <div class="status-divider"></div>
+
+      <!-- Grid Snap Button -->
+      <button id="btn-snap" class="status-btn btn-active" title="Toggle Grid Snap">
+        <svg width="12" height="12" viewBox="0 0 448 512" fill="currentColor"><path d="M384 96V224H256V96H384zm0 192V416H256V288H384zM192 224H64V96H192V224zM64 288H192V416H64V288zM64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64z"/></svg>
+        <span id="snap-status-text">Snap: ON</span>
+      </button>
+
+      <div class="status-divider"></div>
+
+      <!-- Logic Gate Standard Button (ANSI / IEC) -->
+      <button id="btn-standard" class="status-btn" title="Toggle Gate Graphic Standard (ANSI / IEC)">
+        <span class="btn-badge-tag">STD</span>
+        <span class="btn-label-text">ANSI</span>
+      </button>
+
+      <div class="status-divider"></div>
+
+      <!-- Simulation Speed Selector -->
+      <div class="status-select-wrapper" title="Simulation Speed Multiplier">
+        <svg width="12" height="12" viewBox="0 0 512 512" fill="currentColor" class="select-leading-icon"><path d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM256 416c35.3 0 64-28.7 64-64c0-17.4-6.9-33.1-18.1-44.6L366 161.7c5.3-12.1-.2-26.3-12.3-31.6s-26.3 .2-31.6 12.3L257.9 288c-.6 0-1.3 0-1.9 0c-35.3 0-64 28.7-64 64s28.7 64 64 64zM176 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM96 288a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm352-32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
+        <select id="select-speed" class="status-select">
+          <option value="0.25">0.25x</option>
+          <option value="0.5">0.5x</option>
+          <option value="1.0" selected>1.0x</option>
+          <option value="2.0">2.0x</option>
+          <option value="5.0">5.0x</option>
+        </select>
+      </div>
+
+      <div class="status-divider"></div>
+
+      <span class="compatibility-pill">Logicly v1.0–1.3</span>
+    </div>
+  </footer>
+
+  <!-- Settings & Preferences Modal Dialog -->
+  <div id="modal-settings" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog fluent-modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor"><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/></svg>
+          <span>Preferences & Settings</span>
+        </div>
+        <button id="btn-settings-close" class="modal-close-btn" title="Close dialog"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="settings-tabs">
+          <button id="tab-btn-surface" class="settings-tab-btn active">Surface</button>
+          <button id="tab-btn-colors" class="settings-tab-btn">Wire Colors</button>
+          <button id="tab-btn-simulation" class="settings-tab-btn">Simulation</button>
+        </div>
+
+        <!-- Tab 1: Surface -->
+        <div id="tab-content-surface" class="settings-tab-content active">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Application Theme</div>
+              <div class="settings-sublabel">Choose between Bright (Light), Dark, or automatically matching Windows</div>
+            </div>
+            <select id="setting-theme-mode" class="fluent-select" style="width: 140px;">
+              <option value="system">System (Auto)</option>
+              <option value="dark">Dark Theme</option>
+              <option value="light">Bright (Light)</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Snap to Grid</div>
+              <div class="settings-sublabel">Snap components and waypoints to grid coordinates</div>
+            </div>
+            <input type="checkbox" id="setting-snap-grid" checked />
+          </div>
+          <div class="settings-row setting-item">
+            <div class="setting-info">
+              <div class="settings-label setting-title">Snap Edited Wires to 90° Angles (Logicly Style)</div>
+              <div class="settings-sublabel setting-desc">When waypoints are added or adjusted, routes wires along straight orthogonal 90° angles.</div>
+            </div>
+            <label class="setting-switch">
+              <input type="checkbox" id="setting-snap-orthogonal-wires" checked />
+              <span class="setting-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Grid Size</div>
+              <div class="settings-sublabel">Distance between grid points in pixels</div>
+            </div>
+            <select id="setting-grid-size" class="fluent-select" style="width: 100px;">
+              <option value="10">10 px</option>
+              <option value="15" selected>15 px</option>
+              <option value="20">20 px</option>
+              <option value="25">25 px</option>
+              <option value="30">30 px</option>
+            </select>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Show Grid Dots</div>
+              <div class="settings-sublabel">Display subtle dot grid on the canvas</div>
+            </div>
+            <input type="checkbox" id="setting-show-grid" checked />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Show Component Palette</div>
+              <div class="settings-sublabel">Display sidebar containing library of logic parts</div>
+            </div>
+            <input type="checkbox" id="setting-show-palette" checked />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Gate Graphic Standard</div>
+              <div class="settings-sublabel">ANSI (US shaped) or IEC (European rectangular)</div>
+            </div>
+            <select id="setting-gate-standard" class="fluent-select" style="width: 110px;">
+              <option value="ansi" selected>ANSI (US)</option>
+              <option value="iec">IEC (Rect)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tab 2: Wire Colors -->
+        <div id="tab-content-colors" class="settings-tab-content">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Enable Colored Wires</div>
+              <div class="settings-sublabel">Render wire signal states dynamically with distinct colors</div>
+            </div>
+            <input type="checkbox" id="setting-enable-wire-colors" checked />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">High / True Signal (1)</div>
+              <div class="settings-sublabel">Active high logic state</div>
+            </div>
+            <input type="color" id="setting-color-high" class="color-picker-input" value="#00f5d4" />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Low / False Signal (0)</div>
+              <div class="settings-sublabel">Ground / low logic state</div>
+            </div>
+            <input type="color" id="setting-color-low" class="color-picker-input" value="#475569" />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">High-Z / Disconnected Signal</div>
+              <div class="settings-sublabel">Tri-state floating or undefined logic state</div>
+            </div>
+            <input type="color" id="setting-color-hiz" class="color-picker-input" value="#f59e0b" />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Contention / Error Signal</div>
+              <div class="settings-sublabel">Multiple drivers driving opposite signals on shared bus</div>
+            </div>
+            <input type="color" id="setting-color-conflict" class="color-picker-input" value="#ef4444" />
+          </div>
+        </div>
+
+        <!-- Tab 3: Simulation -->
+        <div id="tab-content-simulation" class="settings-tab-content">
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Limit Propagation to Frame Rate</div>
+              <div class="settings-sublabel">Synchronize oscillator propagation with display refresh</div>
+            </div>
+            <input type="checkbox" id="setting-limit-framerate" />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Pause Simulation on Document Open</div>
+              <div class="settings-sublabel">Automatically pause when loading a project or sample</div>
+            </div>
+            <input type="checkbox" id="setting-pause-on-load" />
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-label">Default Floating Input Signal</div>
+              <div class="settings-sublabel">Voltage state assumed by unconnected input pins</div>
+            </div>
+            <select id="setting-default-float" class="fluent-select" style="width: 150px;">
+              <option value="undefined" selected>High-Z (Floating)</option>
+              <option value="false">Pull-Down (Low)</option>
+              <option value="true">Pull-Up (High)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-settings-restore" class="fluent-btn fluent-btn-subtle" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></svg>
+          Restore Defaults
+        </button>
+        <button id="btn-settings-save" class="fluent-btn fluent-btn-accent">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Package IC Modal Dialog -->
+  <div id="modal-package-ic" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog fluent-modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+          <span>Package Custom Integrated Circuit</span>
+        </div>
+        <button id="btn-modal-close" class="modal-close-btn"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <p class="dialog-subtitle">The current circuit will be packaged into a reusable integrated circuit component.</p>
+        <div style="margin-bottom: 14px;">
+          <div class="property-label">Detected Export Connectors:</div>
+          <div id="modal-pins-summary" class="pins-summary-card"></div>
+        </div>
+        <div class="property-row">
+          <label class="property-label" for="input-ic-name">Integrated Circuit Name</label>
+          <input id="input-ic-name" class="property-input" type="text" placeholder="e.g. 1-Bit Full Adder" />
+        </div>
+        <div class="property-row">
+          <label class="property-label" for="input-ic-symbol">Symbol Label (Up to 8 chars displayed on chip)</label>
+          <input id="input-ic-symbol" class="property-input" type="text" placeholder="e.g. ADD" maxlength="8" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-cancel" class="fluent-btn">Cancel</button>
+        <button id="btn-modal-confirm" class="fluent-btn fluent-btn-accent">Create Custom IC</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Modal Dialog -->
+  <div id="modal-alert" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog fluent-modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-alert-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 512 512" fill="currentColor" fill="#f43f5e"><path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
+          <span>Cannot Create Integrated Circuit</span>
+        </div>
+        <button id="btn-alert-close" class="modal-close-btn"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-alert-message" class="dialog-alert-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-alert-ok" class="fluent-btn fluent-btn-accent">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Integrated Circuit Guided Modal Dialog -->
+  <div id="modal-custom-ic-guide" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog fluent-modal-dialog" style="width: 540px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+          <span>Custom Integrated Circuits in ProLogic</span>
+        </div>
+        <button id="btn-ic-guide-close" class="modal-close-btn"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="guide-lead-text">
+          A custom integrated circuit allows you to package any combination of logic gates, flip-flops, and subcircuits into a compact, reusable modular chip with custom pins.
+        </div>
+        <div class="guide-steps-list">
+          <div class="guide-step-card">
+            <div class="guide-step-number">1</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Configure Chip Input Pins</div>
+              <div class="guide-step-desc">Place <strong>Toggle Switches</strong> on your circuit and assign their <em>"Export Pin Name"</em> in the Inspector (these become chip inputs).</div>
+            </div>
+          </div>
+          <div class="guide-step-card">
+            <div class="guide-step-number">2</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Configure Chip Output Pins</div>
+              <div class="guide-step-desc">Place <strong>Light Bulbs</strong> on your circuit and assign their <em>"Export Pin Name"</em> in the Inspector (these become chip outputs).</div>
+            </div>
+          </div>
+          <div class="guide-step-card">
+            <div class="guide-step-number">3</div>
+            <div class="guide-step-content">
+              <div class="guide-step-title">Package Into a Reusable IC</div>
+              <div class="guide-step-desc">Click <strong>"Package IC"</strong> in the toolbar to turn your design into a reusable chip ready for schematic placement!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button id="btn-guide-load-sample" class="fluent-btn" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="13" height="13" viewBox="0 0 448 512" fill="currentColor"><path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"/></svg>
+          Load Sample Full Adder IC
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button id="btn-guide-package-now" class="fluent-btn fluent-btn-accent" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+            Package Current Canvas Circuit
+          </button>
+          <button id="btn-guide-close" class="fluent-btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Select Custom Integrated Circuit Modal Dialog -->
+  <div id="modal-select-custom-ic" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog fluent-modal-dialog" style="width: 520px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+          <span>Select Custom Integrated Circuit</span>
+        </div>
+        <button id="btn-select-ic-close" class="modal-close-btn"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+          Choose an integrated circuit template to insert onto the schematic canvas:
+        </div>
+        <div id="custom-ic-list" class="custom-ic-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button id="btn-select-ic-package-new" class="fluent-btn" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+          Package New IC
+        </button>
+        <button id="btn-select-ic-cancel" class="fluent-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Custom IC Modal Dialog -->
+  <div id="modal-confirm-delete-ic" class="modal-backdrop" style="display: none; z-index: 1100;">
+    <div class="modal-dialog fluent-modal-dialog" style="width: 460px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 448 512" fill="#ef4444"><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/></svg>
+          <span id="modal-confirm-delete-title">Delete Custom IC</span>
+        </div>
+        <button id="btn-confirm-delete-close" class="modal-close-btn" title="Close"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-confirm-delete-message" class="dialog-alert-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-confirm-delete-cancel" class="fluent-btn">Cancel</button>
+        <button id="btn-confirm-delete-confirm" class="fluent-btn fluent-btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Close Unsaved Changes Modal Dialog -->
+  <div id="modal-confirm-close" class="modal-backdrop" style="display: none; z-index: 1200;">
+    <div class="modal-dialog fluent-modal-dialog" style="width: 480px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 512 512" fill="#3b82f6"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm0-384c13.3 0 24 10.7 24 24V264c0 13.3-10.7 24-24 24s-24-10.7-24-24V152c0-13.3 10.7-24 24-24zm32 224a32 32 0 1 1 -64 0 32 32 0 1 1 64 0z"/></svg>
+          <span>Unsaved Changes</span>
+        </div>
+        <button id="btn-confirm-close-x" class="modal-close-btn" title="Cancel"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <p id="modal-confirm-close-message" class="dialog-alert-message" style="margin-bottom: 8px; font-weight: 500; font-size: 14px;">Do you want to save the changes you made to Untitled Circuit?</p>
+        <p style="font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5;">If you close without saving, any changes made since your last save will be permanently lost.</p>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button id="btn-confirm-close-save" class="fluent-btn fluent-btn-accent" style="min-width: 80px; justify-content: center; text-align: center;">Save</button>
+        <button id="btn-confirm-close-dont-save" class="fluent-btn" style="min-width: 90px; justify-content: center; text-align: center;">Don't Save</button>
+        <button id="btn-confirm-close-cancel" class="fluent-btn" style="min-width: 75px; justify-content: center; text-align: center;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About ProLogic Modal Dialog -->
+  <div id="modal-about" class="modal-backdrop" style="display: none;">
+    <div class="modal-dialog fluent-modal-dialog" style="width: 540px; max-width: 92vw;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="15" height="15" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+          <span>About ProLogic</span>
+        </div>
+        <button id="btn-about-modal-close" class="modal-close-btn"><svg width="12" height="12" viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg></button>
+      </div>
+      <div class="modal-body" style="padding: 18px 20px;">
+        <!-- Brand presentation -->
+        <div class="about-hero">
+          <div class="about-logo-badge">
+            <img id="about-modal-logo" src="assets/logo.png" width="52" height="52" alt="ProLogic Logo" />
+          </div>
+          <div>
+            <div class="about-app-name">ProLogic</div>
+            <div class="about-app-version">Version 1.0.0</div>
+            <div class="about-app-desc">Digital Logic Simulator & Schematic CAD</div>
+          </div>
+        </div>
+
+        <!-- Developer & Agency Credits Card -->
+        <div class="about-credits-card">
+          <div class="credits-main">
+            <div class="credits-logo-wrap">
+              <img src="assets/agency-logo.png" class="credits-agency-logo" alt="ProCraftKRD Logo" />
+            </div>
+            <div class="credits-info">
+              <div class="credits-label">Developer & Agency</div>
+              <div class="credits-author-name">Mohammed Sabir</div>
+              <div class="credits-agency-name">ProCraftKRD</div>
+            </div>
+          </div>
+          <div class="credits-actions">
+            <button class="fluent-link-pill" data-open-external="https://github.com/ProCraftKRD" title="Open GitHub">
+              <svg width="13" height="13" viewBox="0 0 496 512" fill="currentColor" class="pill-svg"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+              <span>GitHub</span>
+            </button>
+            <button class="fluent-link-pill fluent-link-telegram" data-open-external="https://t.me/ProCraftKRD" title="Open Telegram">
+              <svg width="13" height="13" viewBox="0 0 496 512" fill="currentColor" class="pill-svg"><path d="M248,8C111.033,8,0,119.033,0,256S111.033,504,248,504,496,392.967,496,256,384.967,8,248,8ZM362.952,176.66c-3.732,39.215-19.881,134.378-28.1,178.3-3.476,18.584-10.322,24.816-16.948,25.425-14.4,1.326-25.338-9.517-39.287-18.661-21.827-14.308-34.158-23.215-55.346-37.177-24.485-16.135-8.612-25,5.342-39.5,3.652-3.793,67.107-61.51,68.335-66.746.153-.655.3-3.1-1.154-4.384s-3.59-.849-5.135-.5q-3.283.746-104.608,69.142-14.845,10.194-26.894,9.934c-8.855-.191-25.888-5.006-38.551-9.123-15.531-5.048-27.875-7.717-26.8-16.291q.84-6.7,18.45-13.7,108.446-47.248,144.628-62.3c68.872-28.647,83.183-33.623,92.511-33.789,2.052-.034,6.639.474,9.61,2.885a10.452,10.452,0,0,1,3.53,6.716A43.765,43.765,0,0,1,362.952,176.66Z"/></svg>
+              <span>Telegram</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Specifications Grid (Short & Simple) -->
+        <div class="about-specs-grid">
+          <div class="about-spec-card">
+            <div class="about-spec-title">
+              <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/></svg>
+              <span>Engine</span>
+            </div>
+            <div class="about-spec-val">Tri-State Logic (0, 1, Hi-Z)</div>
+          </div>
+          <div class="about-spec-card">
+            <div class="about-spec-title">
+              <svg width="13" height="13" viewBox="0 0 576 512" fill="currentColor"><path d="M0 80C0 53.5 21.5 32 48 32h96c26.5 0 48 21.5 48 48V96H384V80c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H432c-26.5 0-48-21.5-48-48V160H192v16c0 1.7-.1 3.4-.3 5L272 288h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H272c-26.5 0-48-21.5-48-48V336c0-1.7 .1-3.4 .3-5L144 224H48c-26.5 0-48-21.5-48-48V80z"/></svg>
+              <span>Compatibility</span>
+            </div>
+            <div class="about-spec-val">Logicly Files & Libraries</div>
+          </div>
+          <div class="about-spec-card">
+            <div class="about-spec-title">
+              <svg width="13" height="13" viewBox="0 0 640 512" fill="currentColor"><path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/></svg>
+              <span>Architecture</span>
+            </div>
+            <div class="about-spec-val">Native TypeScript Core</div>
+          </div>
+          <div class="about-spec-card">
+            <div class="about-spec-title">
+              <svg width="13" height="13" viewBox="0 0 512 512" fill="currentColor"><path d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/></svg>
+              <span>Interface</span>
+            </div>
+            <div class="about-spec-val">Adaptive Dark & Light Theme</div>
+          </div>
+        </div>
+
+        <!-- Shortcuts Section -->
+        <div style="margin-top: 12px;">
+          <div style="font-size: 11px; font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Shortcuts</div>
+          <div class="about-shortcuts-grid">
+            <div class="shortcut-item"><kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd> <span>Undo / Redo</span></div>
+            <div class="shortcut-item"><kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd> <span>Copy / Paste</span></div>
+            <div class="shortcut-item"><kbd>Del</kbd> <span>Delete selection</span></div>
+            <div class="shortcut-item"><kbd>R</kbd> <span>Rotate component</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> <span>Play / Pause simulation</span></div>
+            <div class="shortcut-item"><kbd>Space</kbd> + <kbd>Drag</kbd> <span>Pan canvas</span></div>
+            <div class="shortcut-item"><kbd>Shift+F</kbd> <span>Zoom to fit</span></div>
+            <div class="shortcut-item"><kbd>Ctrl+0</kbd> <span>Reset zoom</span></div>
+            <div class="shortcut-item"><kbd>Ctrl+T</kbd> <span>Toggle theme</span></div>
+            <div class="shortcut-item"><kbd>Ctrl+A</kbd> <span>Select all</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-about-close" class="fluent-btn fluent-btn-accent">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="bundle.js"></script>
+</body>
+</html>

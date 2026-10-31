@@ -1,0 +1,298 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Ambient Glow -->
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0.22" />
+      <stop offset="45%" stop-color="#0078d4" stop-opacity="0.12" />
+      <stop offset="85%" stop-color="#0078d4" stop-opacity="0.02" />
+      <stop offset="100%" stop-color="#0078d4" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Chip Substrate Body Gradient -->
+    <linearGradient id="chipBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#182337" />
+      <stop offset="40%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#070c18" />
+    </linearGradient>
+
+    <!-- Chip Outer Bezel Stroke Gradient -->
+    <linearGradient id="chipBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5d4" />
+      <stop offset="35%" stop-color="#00b4d8" />
+      <stop offset="70%" stop-color="#0078d4" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <!-- Recessed Silicon Die Core Gradient -->
+    <linearGradient id="dieCoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f192c" />
+      <stop offset="50%" stop-color="#0a101e" />
+      <stop offset="100%" stop-color="#050811" />
+    </linearGradient>
+
+    <!-- Monogram Gradient (Cyan to Deep Blue) -->
+    <linearGradient id="plMonogramGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#26ffdf" />
+      <stop offset="30%" stop-color="#00f5d4" />
+      <stop offset="65%" stop-color="#00b4d8" />
+      <stop offset="100%" stop-color="#0078d4" />
+    </linearGradient>
+
+    <!-- Vertical Pin Gradient -->
+    <linearGradient id="vPinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="25%" stop-color="#94a3b8" />
+      <stop offset="70%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <linearGradient id="vPinGradBottom" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="25%" stop-color="#94a3b8" />
+      <stop offset="70%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <!-- Horizontal Pin Gradient -->
+    <linearGradient id="hPinGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="25%" stop-color="#94a3b8" />
+      <stop offset="70%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <linearGradient id="hPinGradRight" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="25%" stop-color="#94a3b8" />
+      <stop offset="70%" stop-color="#334155" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+
+    <!-- Neon Glow Filter -->
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="chipShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000000" flood-opacity="0.65" />
+      <feDropShadow dx="0" dy="0" stdDeviation="15" flood-color="#00f5d4" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Ambient Glow -->
+  <circle cx="256" cy="256" r="236" fill="url(#bgGlow)" />
+
+  <!-- IC Pins Group -->
+  <g id="ic-pins">
+    <!-- Top Pins (4) -->
+    <rect x="176" y="44" width="16" height="56" rx="4" fill="url(#vPinGrad)" />
+    <rect x="224" y="44" width="16" height="56" rx="4" fill="url(#vPinGrad)" />
+    <rect x="272" y="44" width="16" height="56" rx="4" fill="url(#vPinGrad)" />
+    <rect x="320" y="44" width="16" height="56" rx="4" fill="url(#vPinGrad)" />
+    <!-- Top Pin Glowing Tips -->
+    <circle cx="184" cy="48" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="232" cy="48" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="280" cy="48" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="328" cy="48" r="3" fill="#00f5d4" opacity="0.9" />
+
+    <!-- Bottom Pins (4) -->
+    <rect x="176" y="412" width="16" height="56" rx="4" fill="url(#vPinGradBottom)" />
+    <rect x="224" y="412" width="16" height="56" rx="4" fill="url(#vPinGradBottom)" />
+    <rect x="272" y="412" width="16" height="56" rx="4" fill="url(#vPinGradBottom)" />
+    <rect x="320" y="412" width="16" height="56" rx="4" fill="url(#vPinGradBottom)" />
+    <!-- Bottom Pin Glowing Tips -->
+    <circle cx="184" cy="464" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="232" cy="464" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="280" cy="464" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="328" cy="464" r="3" fill="#00f5d4" opacity="0.9" />
+
+    <!-- Left Pins (4) -->
+    <rect x="44" y="176" width="56" height="16" rx="4" fill="url(#hPinGrad)" />
+    <rect x="44" y="224" width="56" height="16" rx="4" fill="url(#hPinGrad)" />
+    <rect x="44" y="272" width="56" height="16" rx="4" fill="url(#hPinGrad)" />
+    <rect x="44" y="320" width="56" height="16" rx="4" fill="url(#hPinGrad)" />
+    <!-- Left Pin Glowing Tips -->
+    <circle cx="48" cy="184" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="48" cy="232" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="48" cy="280" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="48" cy="328" r="3" fill="#00f5d4" opacity="0.9" />
+
+    <!-- Right Pins (4) -->
+    <rect x="412" y="176" width="56" height="16" rx="4" fill="url(#hPinGradRight)" />
+    <rect x="412" y="224" width="56" height="16" rx="4" fill="url(#hPinGradRight)" />
+    <rect x="412" y="272" width="56" height="16" rx="4" fill="url(#hPinGradRight)" />
+    <rect x="412" y="320" width="56" height="16" rx="4" fill="url(#hPinGradRight)" />
+    <!-- Right Pin Glowing Tips -->
+    <circle cx="464" cy="184" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="464" cy="232" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="464" cy="280" r="3" fill="#00f5d4" opacity="0.9" />
+    <circle cx="464" cy="328" r="3" fill="#00f5d4" opacity="0.9" />
+  </g>
+
+  <!-- Microchip Silicon Body with Shadow -->
+  <rect x="96" y="96" width="320" height="320" rx="46" ry="46"
+        fill="url(#chipBodyGrad)"
+        stroke="url(#chipBorderGrad)"
+        stroke-width="3"
+        filter="url(#chipShadow)" />
+
+  <!-- Inner Glass Bezel Line -->
+  <rect x="106" y="106" width="300" height="300" rx="38" ry="38"
+        fill="none"
+        stroke="#ffffff"
+        stroke-opacity="0.08"
+        stroke-width="1.5" />
+
+  <!-- Pin 1 Index Dot (Authentic IC orientation notch) -->
+  <circle cx="132" cy="132" r="14" fill="#00f5d4" opacity="0.15" />
+  <circle cx="132" cy="132" r="7" fill="#00f5d4" />
+  <circle cx="132" cy="132" r="3" fill="#ffffff" />
+
+  <!-- Substrate Neon Circuit Traces & Vias -->
+  <g id="circuit-traces" stroke="#00f5d4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.75">
+    <!-- Top-Left Traces -->
+    <path d="M 184 100 L 184 130 L 160 154" fill="none" />
+    <circle cx="160" cy="154" r="3" fill="#00f5d4" />
+
+    <!-- Top-Right Traces -->
+    <path d="M 280 100 L 280 125 L 305 150" fill="none" />
+    <circle cx="305" cy="150" r="3" fill="#00f5d4" />
+    <path d="M 328 100 L 328 135 L 354 161" fill="none" />
+    <circle cx="354" cy="161" r="3" fill="#00f5d4" />
+
+    <!-- Left-Mid Traces -->
+    <path d="M 100 232 L 126 232 L 146 212" fill="none" />
+    <circle cx="146" cy="212" r="3" fill="#00f5d4" />
+    <path d="M 100 280 L 125 280 L 145 300" fill="none" />
+    <circle cx="145" cy="300" r="3" fill="#00f5d4" />
+
+    <!-- Right-Mid Traces -->
+    <path d="M 412 232 L 386 232 L 366 212" fill="none" />
+    <circle cx="366" cy="212" r="3" fill="#00f5d4" />
+    <path d="M 412 280 L 386 280 L 366 300" fill="none" />
+    <circle cx="366" cy="300" r="3" fill="#00f5d4" />
+
+    <!-- Bottom Traces -->
+    <path d="M 184 412 L 184 382 L 160 358" fill="none" />
+    <circle cx="160" cy="358" r="3" fill="#00f5d4" />
+    <path d="M 280 412 L 280 385 L 300 365" fill="none" />
+    <circle cx="300" cy="365" r="3" fill="#00f5d4" />
+    <path d="M 328 412 L 328 380 L 350 358" fill="none" />
+    <circle cx="350" cy="358" r="3" fill="#00f5d4" />
+  </g>
+
+  <!-- Recessed Silicon Die Core -->
+  <rect x="146" y="146" width="220" height="220" rx="30" ry="30"
+        fill="url(#dieCoreGrad)"
+        stroke="url(#plMonogramGrad)"
+        stroke-width="2"
+        stroke-opacity="0.45" />
+
+  <!-- Silicon Die Subtle Grid / Bus lines -->
+  <g opacity="0.08" stroke="#00f5d4" stroke-width="1">
+    <line x1="166" y1="180" x2="346" y2="180" />
+    <line x1="166" y1="218" x2="346" y2="218" />
+    <line x1="166" y1="256" x2="346" y2="256" />
+    <line x1="166" y1="294" x2="346" y2="294" />
+    <line x1="166" y1="332" x2="346" y2="332" />
+
+    <line x1="180" y1="166" x2="180" y2="346" />
+    <line x1="218" y1="166" x2="218" y2="346" />
+    <line x1="256" y1="166" x2="256" y2="346" />
+    <line x1="294" y1="166" x2="294" y2="346" />
+    <line x1="332" y1="166" x2="332" y2="346" />
+  </g>
+
+  <!-- Core Neon Glow Underlay for Monogram -->
+  <g filter="url(#neonGlow)" opacity="0.6">
+    <!-- P Glow Silhouette -->
+    <path fill="#00f5d4" fill-rule="evenodd" d="
+      M 186 196
+      L 236 196
+      C 258 196 270 210 270 231
+      C 270 252 258 266 236 266
+      L 204 266
+      L 204 310
+      C 204 313.3 201.3 316 198 316
+      L 186 316
+      C 182.7 316 180 313.3 180 310
+      L 180 202
+      C 180 198.7 182.7 196 186 196 Z
+      M 204 216
+      L 232 216
+      C 242 216 248 222 248 231
+      C 248 240 242 246 232 246
+      L 204 246 Z
+    " />
+    <!-- L Glow Silhouette -->
+    <path fill="#00f5d4" d="
+      M 286 196
+      C 282.7 196 280 198.7 280 202
+      L 280 310
+      C 280 313.3 282.7 316 286 316
+      L 326 316
+      C 329.3 316 332 313.3 332 310
+      L 332 298
+      C 332 294.7 329.3 292 326 292
+      L 304 292
+      L 304 202
+      C 304 198.7 301.3 196 298 196
+      L 286 196 Z
+    " />
+  </g>
+
+  <!-- Master "PL" Monogram (Vibrant Foreground) -->
+  <g id="pl-monogram">
+    <!-- Stylized "P" -->
+    <path fill="url(#plMonogramGrad)" fill-rule="evenodd" d="
+      M 186 196
+      L 236 196
+      C 258 196 270 210 270 231
+      C 270 252 258 266 236 266
+      L 204 266
+      L 204 310
+      C 204 313.3 201.3 316 198 316
+      L 186 316
+      C 182.7 316 180 313.3 180 310
+      L 180 202
+      C 180 198.7 182.7 196 186 196 Z
+      M 204 216
+      L 232 216
+      C 242 216 248 222 248 231
+      C 248 240 242 246 232 246
+      L 204 246 Z
+    " />
+
+    <!-- Stylized "L" -->
+    <path fill="url(#plMonogramGrad)" d="
+      M 286 196
+      C 282.7 196 280 198.7 280 202
+      L 280 310
+      C 280 313.3 282.7 316 286 316
+      L 326 316
+      C 329.3 316 332 313.3 332 310
+      L 332 298
+      C 332 294.7 329.3 292 326 292
+      L 304 292
+      L 304 202
+      C 304 198.7 301.3 196 298 196
+      L 286 196 Z
+    " />
+
+    <!-- Logic Signal Sparks / Via Nodes at Key Monogram Junctions -->
+    <circle cx="232" cy="196" r="3.5" fill="#ffffff" />
+    <circle cx="332" cy="304" r="3.5" fill="#ffffff" />
+  </g>
+
+  <!-- Top Specular Highlight Arc (Glass Touch) -->
+  <path d="M 112 140 C 112 120 126 108 148 108 L 364 108 C 386 108 400 120 400 140"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        opacity="0.22" />
+</svg>

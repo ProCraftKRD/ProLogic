@@ -1,0 +1,75 @@
+{
+  "name": "prologic",
+  "version": "1.0.0",
+  "description": "Next-generation digital logic simulator with complete Logicly interoperability",
+  "main": "dist/electron/main.js",
+  "author": "ProCraftKRD",
+  "license": "MIT",
+  "scripts": {
+    "build:ui": "npx esbuild src/ui/app.ts --bundle --outfile=dist/ui/bundle.js --platform=browser --external:zlib",
+    "copy:assets": "node -e \"const fs = require('fs'); fs.mkdirSync('dist/ui/styles', {recursive: true}); fs.mkdirSync('dist/ui/assets', {recursive: true}); fs.copyFileSync('src/ui/index.html', 'dist/ui/index.html'); if (fs.existsSync('src/ui/splash.html')) fs.copyFileSync('src/ui/splash.html', 'dist/ui/splash.html'); fs.copyFileSync('src/ui/styles/main.css', 'dist/ui/styles/main.css'); if (fs.existsSync('src/ui/assets')) { fs.cpSync('src/ui/assets', 'dist/ui/assets', {recursive: true}); }\"",
+    "generate:icons": "powershell -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
+    "build": "npm run copy:assets && npm run build:ui && tsc",
+    "test": "tsc && node dist/tests/runner.js",
+    "start": "npm run build && electron dist/electron/main.js",
+    "dist": "npm run build && electron-builder --win nsis portable"
+  },
+  "build": {
+    "appId": "com.prologic.simulator",
+    "productName": "ProLogic",
+    "copyright": "Copyright © 2026 ProCraftKRD",
+    "icon": "build/icon.ico",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "build/**/*",
+      "package.json"
+    ],
+    "fileAssociations": [
+      { "ext": "plgc", "name": "ProLogic Circuit Document", "role": "Editor" },
+      { "ext": "plgclib", "name": "ProLogic IC Library Document", "role": "Editor" },
+      { "ext": "plgcx", "name": "ProLogic Uncompressed Circuit Document", "role": "Editor" },
+      { "ext": "plgclibx", "name": "ProLogic Uncompressed Library Document", "role": "Editor" },
+      { "ext": "logicly", "name": "Logicly Circuit Document", "role": "Editor" },
+      { "ext": "logiclylib", "name": "Logicly Library Document", "role": "Editor" },
+      { "ext": "logiclyx", "name": "Logicly Uncompressed Circuit Document", "role": "Editor" },
+      { "ext": "logiclylibx", "name": "Logicly Uncompressed Library Document", "role": "Editor" },
+      { "ext": "circ", "name": "Logisim Circuit Document", "role": "Viewer" },
+      { "ext": "dig", "name": "Digital Circuit Document", "role": "Viewer" },
+      { "ext": "cdd", "name": "CircuitVerse Document", "role": "Viewer" },
+      { "ext": "cv", "name": "CircuitVerse Document", "role": "Viewer" },
+      { "ext": "simcir", "name": "SimcirJS Circuit Document", "role": "Viewer" }
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ProLogic",
+      "uninstallDisplayName": "${productName}",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "installerHeader": "build/installerHeader.bmp"
+    }
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "electron": "^40.8.0",
+    "electron-builder": "^26.7.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.4.5"
+  }
+}

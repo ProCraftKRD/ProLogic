@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProLogic - Starting...</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: #121620;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI Variable Display', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    .splash-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: linear-gradient(145deg, #181d28 0%, #0e121a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 30px 36px 22px;
+      overflow: hidden;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Subtle ambient neon glow behind logo */
+    .ambient-glow {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(0, 245, 212, 0.22) 0%, rgba(0, 120, 212, 0.1) 50%, transparent 75%);
+      pointer-events: none;
+      filter: blur(24px);
+    }
+
+    .brand-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-container {
+      width: 82px;
+      height: 82px;
+      position: relative;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: logoPulse 2.8s ease-in-out infinite alternate;
+    }
+
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 16px rgba(0, 245, 212, 0.35));
+    }
+
+    @keyframes logoPulse {
+      0% {
+        transform: scale(0.98);
+        filter: drop-shadow(0 0 10px rgba(0, 245, 212, 0.25));
+      }
+      100% {
+        transform: scale(1.02);
+        filter: drop-shadow(0 0 22px rgba(0, 245, 212, 0.55));
+      }
+    }
+
+    .app-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .app-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      background: linear-gradient(135deg, #ffffff 0%, #00f5d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .version-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(0, 245, 212, 0.12);
+      color: #00f5d4;
+      border: 1px solid rgba(0, 245, 212, 0.3);
+      letter-spacing: 0.3px;
+    }
+
+    .app-subtitle {
+      font-size: 12px;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-top: 4px;
+      letter-spacing: 0.2px;
+    }
+
+    /* Bottom loading footer */
+    .loading-footer {
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .status-text {
+      color: #cbd5e1;
+      font-weight: 500;
+      transition: opacity 0.15s ease;
+    }
+
+    .author-badge {
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    /* Indeterminate Progress Bar */
+    .progress-track {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-shimmer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 40%;
+      background: linear-gradient(90deg, transparent 0%, #00f5d4 50%, #0078d4 100%);
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(0, 245, 212, 0.6);
+      animation: appShimmer 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes appShimmer {
+      0% {
+        left: -40%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
+    .fade-out {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-card" id="splash-card">
+    <div class="ambient-glow"></div>
+
+    <div class="brand-section">
+      <div class="logo-container">
+        <img src="assets/logo-badge.png" class="logo-img" alt="ProLogic Logo" />
+      </div>
+      <div class="app-title-row">
+        <span class="app-title">ProLogic</span>
+        <span class="version-pill">v1.0.0</span>
+      </div>
+      <div class="app-subtitle">Digital Logic Simulator &amp; Schematic CAD</div>
+    </div>
+
+    <div class="loading-footer">
+      <div class="status-row">
+        <span class="status-text" id="status-text">Initializing 3-valued simulation core...</span>
+        <span class="author-badge">Mohammed Sabir • ProCraftKRD</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-shimmer"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const statusSteps = [
+      "Initializing 3-valued simulation core...",
+      "Verifying clean-room ActionScript 3 engines...",
+      "Loading Logicly component library...",
+      "Preparing interactive workspace...",
+      "Starting simulation engine...",
+      "Ready."
+    ];
+
+    let currentStep = 0;
+    const statusEl = document.getElementById('status-text');
+
+    const interval = setInterval(() => {
+      currentStep++;
+      if (currentStep < statusSteps.length) {
+        statusEl.style.opacity = '0';
+        setTimeout(() => {
+          statusEl.textContent = statusSteps[currentStep];
+          statusEl.style.opacity = '1';
+        }, 120);
+      } else {
+        clearInterval(interval);
+      }
+    }, 320);
+  </script>
+</body>
+</html>

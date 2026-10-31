@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <radialGradient id="ambientGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0.35" />
+      <stop offset="70%" stop-color="#0078d4" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#0078d4" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="plBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5d4" />
+      <stop offset="45%" stop-color="#00b4d8" />
+      <stop offset="100%" stop-color="#0078d4" />
+    </linearGradient>
+    <linearGradient id="innerStrokeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05" />
+    </linearGradient>
+  </defs>
+
+  <!-- Ambient Glow -->
+  <circle cx="256" cy="256" r="240" fill="url(#ambientGlow)" />
+
+  <!-- Main Rounded Rectangle Badge -->
+  <rect x="44" y="44" width="424" height="424" rx="104" fill="url(#plBadgeGrad)" />
+  <rect x="44" y="44" width="424" height="424" rx="104" fill="none" stroke="url(#innerStrokeGrad)" stroke-width="4" />
+
+  <!-- Bold Central Monogram "PL" -->
+  <text x="256" y="338" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif" font-weight="900" font-size="228" fill="#0b0f19" text-anchor="middle" letter-spacing="-6">PL</text>
+</svg>
