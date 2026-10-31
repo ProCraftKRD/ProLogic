@@ -44,7 +44,7 @@ Whether you are simulating basic logic gates, building complex synchronous state
   <img src="./assets/readme/showcase.png" width="100%" alt="ProLogic Dark Mode Workspace Showcase" style="border-radius: 6px;">
 </p>
 
-> **Live Circuit Canvas in Action**: ProLogic running in dark theme featuring active 90° orthogonal wire routes with interactive waypoints, live signal propagation (`HIGH 1` in neon cyan, `LOW 0` in slate), searchable Component Catalog, and real-time Component Inspector with pin analysis.
+> **Live Circuit Canvas in Action**: ProLogic running in dark theme featuring active curved and custom wire routing with interactive waypoints, live signal propagation (`HIGH 1` in neon cyan, `LOW 0` in slate) in the center "4-Bit Asynchronous Ripple Counter with Hex Display", searchable Component Catalog on the left, and real-time Component Inspector with pin analysis on the right.
 
 ---
 
